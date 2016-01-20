@@ -1,0 +1,23 @@
+weather.form:
+  path: '/weather'
+  defaults:
+    _title: 'Example form'
+    _form: '\Drupal\weather\Form\WeatherForm'
+  requirements:
+    _permission: 'access content'
+
+weather.example:
+  path: '/example'
+  defaults:
+    _title: 'Example form'
+    _controller: '\Drupal\weather\Controller\WeatherController::content'
+  requirements:
+    _permission: 'access content'
+
+weather.table:
+  path: '/table'
+  defaults:
+    _title: 'Example form'
+    _controller: '\Drupal\weather\Form\WeatherTable::content'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,9 @@
+weather-form:
+  version: 1.x
+  css:
+    theme:
+      assets/css/weather-form.css: {}
+  js:
+    assets/js/weather-form.js: {}
+  dependencies:
+    - core/jquery

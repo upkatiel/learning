@@ -1,0 +1,6 @@
+input#edit-date-picker{
+    display:none;
+}
+.weather-form .form-inline .form-control {
+    width : 100%;
+}

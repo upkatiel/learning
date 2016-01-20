@@ -1,0 +1,6 @@
+weather.admin:
+  title: 'Weather API Key'
+  description: 'The API key to access world weather online API. https://developer.worldweatheronline.com'
+  parent: system.admin_config_system
+  route_name: weather.form
+  weight: 100
