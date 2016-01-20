@@ -26,6 +26,7 @@ class WeatherTable extends WeatherController {
    * {@inheritdoc}
    */
   public function content() {
+
     $json_decoded = new WeatherController();
     $json_decoded->content();
     if ($json_decoded) {

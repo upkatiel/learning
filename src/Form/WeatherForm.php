@@ -15,6 +15,7 @@ namespace Drupal\weather\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\weather\Http\weatherHttpRequest;
+use Drupal\weather\Controller;
 
 /**
  * Implements an example form.
@@ -98,16 +99,27 @@ class WeatherForm extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    if (strlen($form_state->getValue('phone_number')) < 3) {
-      $form_state->setErrorByName('phone_number', $this->t('The phone number is too short. Please enter a full phone number.'));
-    }
+//    if (strlen($form_state->getValue('phone_number')) < 3) {
+//      $form_state->setErrorByName('phone_number', $this->t('The phone number is too short. Please enter a full phone number.'));
+//    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message($this->t('Your phone number is @number', array('@number' => $form_state->getValue('phone_number'))));
+    $values = $form_state->getValues();
+
+    $location = $values['address'];
+    $date = $values['date'];
+    $date_picker = $values['date_picker'];
+    $days_to_fore = $values['days_to_fore'];
+    $hourly_interval = $values['hourly_interval'];
+    $current_conditions = $values['current_conditions'];
+
+    $cache_id = md5('?q='.$location . '&date='.$date);
+    $form_state->setRedirect('weather.cache' , array('CACHE_ID' => $cache_id));
+  //  drupal_set_message($this->t('Your phone number is @number', array('@number' => $form_state->getValue('phone_number'))));
   }
 
 }

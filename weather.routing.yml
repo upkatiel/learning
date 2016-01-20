@@ -21,3 +21,11 @@ weather.table:
     _controller: '\Drupal\weather\Form\WeatherTable::content'
   requirements:
     _permission: 'access content'
+
+weather.cache:
+  path: '/weatherresults/{CACHE_ID}'
+  defaults:
+    _title: 'Example form'
+    _controller: '\Drupal\weather\Controller\WeatherController::cache'
+  requirements:
+    _permission: 'access content'

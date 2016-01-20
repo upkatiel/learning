@@ -6,6 +6,7 @@ use Drupal\Component\Utility\String;
 use Drupal\Core\Controller\ControllerBase;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\Core\image\Entity;
 
 /** 
  * Get a response code from any URL using Guzzle in Drupal 8!
@@ -37,6 +38,20 @@ class WeatherController extends ControllerBase {
    */
   protected $key;
 
+  public function cache($CACHE_ID){
+    $data = NULL;
+    if ($cache = \Drupal::cache()->get($CACHE_ID)) {
+      $data = $cache->data;
+    }
+    else {
+      $data = 'dffI am now cached.';
+      \Drupal::cache()->set($CACHE_ID, $data);
+    }
+    print_r($data);
+    exit;
+    return array($data);
+  }
+
   /**
    * Generates an example page.
    */
@@ -56,16 +71,29 @@ class WeatherController extends ControllerBase {
     if ($json_decoded) {
       $compt = 0;
       foreach ($json_decoded as $key => $weather) {
-        $rows[$compt]['FeelsLikeC'] = $weather['current_condition'][0]['FeelsLikeC'];
-        $rows[$compt]['humidity'] = $weather['current_condition'][0]['humidity'];
+        $rows[$compt]['weatherDesc'] = $weather['current_condition'][0]['weatherDesc'][0]['value'];
+        //$rows[$compt]['icon'] = '<img src="'.$weather['current_condition'][0]['weatherIconUrl'][0]['value'].'"/>';
+        $rows[$compt]['temp'] = $weather['current_condition'][0]['temp_C'];
+        $rows[$compt]['observation_time'] = $weather['current_condition'][0]['observation_time'];
         $compt++;
       }
+      $compt = 0;
+//      foreach ($json_decoded['data']['weather'][0]['hourly'] as $key => $hour) {
+//        $rows[$compt]['weatherDesc'] = $weather['current_condition'][0]['weatherDesc'][0]['value'];
+//        $rows[$compt]['temp'] = $weather['current_condition'][0]['temp_C'];
+//        $rows[$compt]['observation_time'] = $weather['current_condition'][0]['observation_time'];
+//        $compt++;
+//      }
     }
-    $table = array(
+    $table[] = array(
+      '#type' => 'markup',
+      '#markup' => '<h2>Current Conditions</h2>',
+    );
+    $table[] = array(
       '#type' => 'table',
-      '#header' => array('FeelsLikeC', 'humidity'),
+      '#header' => array('Description', 'Temperature (C)' , 'Observation Time' ),
       '#rows' => $rows,
-      '#attributes' => array('id' => 'book-outline'),
+      '#attributes' => array('id' => 'current-conditions'),
       '#empty' => t('No item available.'),
     );
     return array('#markup' => drupal_render($table));
