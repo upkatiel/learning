@@ -4,3 +4,17 @@
  * @file
  * weather.module
  */
+function weather_theme() {
+  $theme['weather_conditions'] = [
+    'variables' => [
+      'location' => NULL,
+      'current_conditions' => NULL,
+      'current_conditions_title' => NULL,
+      'day_condition' => NULL,
+      'day_condition_title' => NULL,
+    ],
+    'template' => 'weather-conditions'
+  ];
+
+  return $theme;
+}

@@ -117,9 +117,25 @@ class WeatherForm extends FormBase {
     $hourly_interval = $values['hourly_interval'];
     $current_conditions = $values['current_conditions'];
 
-    $cache_id = md5('?q='.$location . '&date='.$date);
-    $form_state->setRedirect('weather.cache' , array('CACHE_ID' => $cache_id));
-  //  drupal_set_message($this->t('Your phone number is @number', array('@number' => $form_state->getValue('phone_number'))));
+    if ($date_picker) {
+      $date = $date_picker;
+    }
+    elseif ($date === 0) {
+      $date = date('Y-m-d');
+    }
+    else {
+      $datetime = new DateTime('tomorrow');
+      $date = $datetime->format('Y-m-d');
+    }
+    $form_state->setRedirect('weather.cache' ,
+      array(
+        'date' => $date,
+        'days_to_fore' => $days_to_fore,
+        'hourly_interval' => $hourly_interval,
+        'current_conditions' => $current_conditions,
+        'location' => $location
+      )
+    );
   }
 
 }

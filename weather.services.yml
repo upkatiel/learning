@@ -1,0 +1,8 @@
+services:
+  weather.manager:
+    class: Drupal\weather\WeatherManager
+    arguments: ['@weather.manager.storage']
+  weather.manager.storage:
+    class: Drupal\weather\WeatherStorageCache
+  weather.collection:
+    class: Drupal\weather\WeatherCollection

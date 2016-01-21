@@ -6,14 +6,6 @@ weather.form:
   requirements:
     _permission: 'access content'
 
-weather.example:
-  path: '/example'
-  defaults:
-    _title: 'Example form'
-    _controller: '\Drupal\weather\Controller\WeatherController::content'
-  requirements:
-    _permission: 'access content'
-
 weather.table:
   path: '/table'
   defaults:
@@ -21,11 +13,18 @@ weather.table:
     _controller: '\Drupal\weather\Form\WeatherTable::content'
   requirements:
     _permission: 'access content'
-
+#
+#weather.cache:
+#  path: 'weather/{date}/{days_to_fore}/{hourly_interval}/{current_conditions}/{location}'
+#  defaults:
+#    _title: 'Example form'
+#    _controller: '\Drupal\weather\Controller\WeatherController::content'
+#  requirements:
+#    _permission: 'access content'
 weather.cache:
-  path: '/weatherresults/{CACHE_ID}'
+  path: 'weather/{date}/{days_to_fore}/{hourly_interval}/{current_conditions}/{location}'
   defaults:
     _title: 'Example form'
-    _controller: '\Drupal\weather\Controller\WeatherController::cache'
+    _controller: '\Drupal\weather\Controller\WeatherController::getWeather'
   requirements:
     _permission: 'access content'
