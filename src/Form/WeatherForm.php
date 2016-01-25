@@ -38,6 +38,10 @@ class WeatherForm extends FormBase {
       1 => t('Tomorrow'),
       2 => t('Enter Date'),
     ];
+    $days_to_show = [];
+    for ($day = 0; $day < 11; $day++) {
+      $days_to_show[] = $day;
+    }
     $form['weather']['address'] = [
       '#type' => 'textfield',
       '#required' => TRUE,
@@ -62,21 +66,9 @@ class WeatherForm extends FormBase {
     ];
     $form['weather']['days_to_fore'] = [
       '#title' => t('Days To Forecast'),
-      '#type' => 'number',
+      '#type' => 'select',
       '#required' => TRUE,
-      '#attributes' => [
-        'max' => 10,
-        'placeholder' => 'Enter days to forcast'
-      ],
-    ];
-    $form['weather']['hourly_interval'] = [
-      '#type' => 'number',
-      '#required' => TRUE,
-      '#title' => t('Hourly interval of reporting'),
-      '#attributes' => [
-        'max' => 24,
-        'placeholder' => 'Enter hourly interval of report'
-      ],
+      '#options' => $days_to_show,
     ];
     $form['weather']['current_conditions'] = [
       '#type' => 'checkbox',
@@ -114,28 +106,27 @@ class WeatherForm extends FormBase {
     $date = $values['date'];
     $date_picker = $values['date_picker'];
     $days_to_fore = $values['days_to_fore'];
-    $hourly_interval = $values['hourly_interval'];
     $current_conditions = $values['current_conditions'];
+    switch ($date) {
+      case 1:
+        $datetime = new \DateTime('tomorrow');
+        $date = $datetime->format('Y-m-d');
+        break;
+      case 2:
+        $date = $date_picker;
+        break;
+      default:
+        $datetime = new \DateTime('now');
+        $date = $datetime->format('Y-m-d');
+    }
 
-    if ($date_picker) {
-      $date = $date_picker;
-    }
-    elseif ($date === 0) {
-      $date = date('Y-m-d');
-    }
-    else {
-      $datetime = new DateTime('tomorrow');
-      $date = $datetime->format('Y-m-d');
-    }
     $form_state->setRedirect('weather.cache' ,
       array(
         'date' => $date,
-        'days_to_fore' => $days_to_fore,
-        'hourly_interval' => $hourly_interval,
-        'current_conditions' => $current_conditions,
-        'location' => $location
+        'location' => $location,
+        'days' => $days_to_fore,
+        'current' => $current_conditions,
       )
     );
   }
-
 }

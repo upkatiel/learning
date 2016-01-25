@@ -3,21 +3,25 @@
 namespace Drupal\weather\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\weather\WeatherCollection;
+use Drupal\weather\WeatherManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** 
+
+/**
  * Get a response code from any URL using Guzzle in Drupal 8!
- * 
- * Usage: 
+ *
+ * Usage:
  * In the head of your document:
- * 
+ *
  * use Drupal\weather\Http\CustomGuzzleHttp;
- * 
+ *
  * In the area you want to return the result, using any URL for $url:
  *
  * $check = new CustomGuzzleHttp();
  * $response = $check->performRequest($url);
- *  
+ *
  **/
 
 class WeatherController extends ControllerBase {
@@ -50,34 +54,35 @@ class WeatherController extends ControllerBase {
       $container->get('weather.collection')
     );
   }
-  public function getWeather(\DateTime $date, $days_to_fore, $hourly_interval, $current_conditions, $location) {
-    $collection = $this->manager->get($date, $location, $days_to_fore);
-    $current = $this->collection->currentConditionTable($collection, $location);
-    $table[] = array(
-      '#type' => 'table',
-      '#header' => $current['current_condition']['header'],
-      '#rows' => $current['current_condition']['rows'],
-      '#attributes' => array('id' => 'current-conditions'),
-      '#empty' => t('No item available.'),
-    );
-    $days = $this->collection->weatherTable($collection, $days_to_fore);
 
-    $day_table[] = array(
-      '#type' => 'table',
-      '#header' => $days['header'],
-      '#rows' => $days['rows'],
-      '#attributes' => array('id' => 'current-conditions'),
-      '#empty' => t('No item available.'),
-    );
-    return ['#theme' => 'weather_conditions',
-      '#location' => $location,
-      '#current_conditions' => $table,
-      '#current_conditions_title' => 'Current Conditions',
-      '#day_condition' => $day_table,
-      '#day_condition_title' => $date,
-    ];
+  public function getWeather($date, $location) {
+    $days = $_GET['days'];
+    if (!isset($days)) {
+      $days = 1;
+    }
+    $current_conditions = $_GET['current'];
+
+    $date = new \DateTime($date);
+    // Make sure days is an integer.
+    $days = (int) $days;
+    $iteration_date = clone $date;
+    if ($current_conditions) {
+      $collection = $this->manager->get($iteration_date, $location);
+      $theme[] = [
+        '#theme' => 'weather_current_conditions',
+        '#collection' => $collection->current,
+        '#location' => $location
+      ];
+    }
+    for ($day = 0; $day < $days; $day++) {
+      $collection = $this->manager->get($iteration_date, $location);
+      $theme[] = [
+        '#theme' => 'weather_date',
+        '#collection' => $collection->getCollection(),
+        '#date' => $iteration_date->format('D, dS F'),
+      ];
+      $iteration_date->modify('+1 days');
+    }
+    return $theme;
   }
-
-
-
 }
